@@ -13,22 +13,23 @@ function CardEdit() {
   const [deck, setDeck] = useState({});
   const [card, setCard] = useState({});
 
-  async function getCard() {
-    try {
-      setCard(await readCard(cardId, new AbortController().signal));
-      setDeck(await readDeck(deckId, new AbortController().signal));
-    } catch (error) {
-      if (error === "AbortError") {
-        console.log("Aborted");
-      } else {
-        throw error;
-      }
-    }
-  }
-
   useEffect(() => {
+    const getCard = async () => {
+      try {
+        const controller = new AbortController();
+
+        setCard(await readCard(cardId, controller.signal));
+        setDeck(await readDeck(deckId, controller.signal));
+      } catch (error) {
+        if (error.name === "AbortError") {
+          console.log("Aborted");
+        } else {
+          throw error;
+        }
+      }
+    };
     getCard();
-  }, []);
+  }, [cardId, deckId]);
 
   const handleChange = ({ target }) => {
     if (target.name === "front") {

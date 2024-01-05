@@ -12,7 +12,7 @@ function DeckScreen() {
   const [deck, setDeck] = useState({});
   const [cards, setCards] = useState([]);
 
-  async function getDeck() {
+  async function reloadDeck() {
     try {
       const response = await readDeck(deckId, new AbortController().signal);
       setDeck(response);
@@ -27,8 +27,22 @@ function DeckScreen() {
   }
 
   useEffect(() => {
+    const getDeck = async () => {
+      try {
+        const response = await readDeck(deckId, new AbortController().signal);
+        setDeck(response);
+        setCards(response.cards);
+      } catch (error) {
+        if (error === "AbortError") {
+          console.log("Aborted");
+        } else {
+          throw error;
+        }
+      }
+    };
+
     getDeck();
-  }, []);
+  }, [deckId]);
 
   const handleDeleteDeck = (deckId) => {
     deleteDeck(deckId);
@@ -38,7 +52,7 @@ function DeckScreen() {
 
   const handleDeleteCard = (cardId) => {
     deleteCard(cardId);
-    getDeck();
+    reloadDeck();
   };
 
   if (!deck) {

@@ -11,30 +11,29 @@ function AddCard() {
     name: "",
     description: "",
   };
-  const [deck, setDeck] = useState({ ...initialDeckState });
 
   const initialCardState = {
     front: "",
     back: "",
   };
+  const [deck, setDeck] = useState({ ...initialDeckState });
   const [card, setCard] = useState({ ...initialCardState });
 
-  async function getDeck() {
-    try {
-      const response = await readDeck(deckId, new AbortController().signal);
-      setDeck(response);
-    } catch (error) {
-      if (error === "AbortError") {
-        console.log("Aborted");
-      } else {
-        throw error;
-      }
-    }
-  }
-
   useEffect(() => {
+    const getDeck = async () => {
+      try {
+        const response = await readDeck(deckId, new AbortController().signal);
+        setDeck(response);
+      } catch (error) {
+        if (error === "AbortError") {
+          console.log("Aborted");
+        } else {
+          throw error;
+        }
+      }
+    };
     getDeck();
-  }, []);
+  }, [deckId]);
 
   const handleChange = ({ target }) => {
     if (target.name === "front") {

@@ -4,7 +4,7 @@ import {
   useHistory,
   Link,
 } from "react-router-dom/cjs/react-router-dom.min";
-import { readDeck } from "../utils/api";
+import { readDeck, updateDeck } from "../utils/api";
 
 function DeckEdit() {
   const initialDeckState = {
@@ -15,22 +15,22 @@ function DeckEdit() {
   const { deckId } = useParams();
   const history = useHistory();
 
-  async function getDeck() {
-    try {
-      const response = await readDeck(deckId, new AbortController().signal);
-      setDeck(response);
-    } catch (error) {
-      if (error === "AbortError") {
-        console.log("Aborted");
-      } else {
-        throw error;
-      }
-    }
-  }
-
   useEffect(() => {
+    const getDeck = async () => {
+      try {
+        const response = await readDeck(deckId, new AbortController().signal);
+        setDeck(response);
+      } catch (error) {
+        if (error === "AbortError") {
+          console.log("Aborted");
+        } else {
+          throw error;
+        }
+      }
+    };
+
     getDeck();
-  }, []);
+  }, [deckId]);
 
   const handleChange = ({ target }) => {
     if (target.name === "name") {
@@ -40,9 +40,11 @@ function DeckEdit() {
     }
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setDeck(deck).then((newDeck) => history.push(`/decks/${newDeck.id}`));
+    const updatedDeck = await updateDeck(deck);
+    setDeck(updatedDeck);
+    history.push(`/decks/${deckId}`);
   };
 
   return (

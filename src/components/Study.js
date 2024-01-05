@@ -24,7 +24,7 @@ function Study() {
       }
     }
     getDecks();
-  }, []);
+  }, [deckId]);
 
   const handleFlip = () => {
     setFlipped(!flipped);

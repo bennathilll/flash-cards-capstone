@@ -18,12 +18,6 @@ function CreateDeck() {
     }
   };
 
-  //   const handleSubmit = async (event) => {
-  //     event.preventDefault();
-  //     await createDeck(deck).then((newDeck) =>
-  //       history.push(`/decks/${newDeck.id}`)
-  //     );
-  //   };
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
